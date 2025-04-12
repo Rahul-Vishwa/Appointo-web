@@ -1,0 +1,43 @@
+@import "tailwindcss";
+
+@font-face {
+    font-family: 'Helvetica';
+    src: url('../public/HelveticaNeueMedium.otf') format('opentype');
+}
+
+:root {
+    --primary-color: #141415;
+    --primary-color-light: #242525;
+    --primary-color-border: #434343;
+    --secondary-color: #006239;
+    --secondary-color-light: #208c5d;
+    --font-size-base: 14px;
+    --text-color: #fafafa;
+}
+
+body{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    color: var(--text-color);
+    background-color: var(--primary-color);
+    font-size: 12px;
+    font-family: 'Helvetica', 'Arial', sans-serif;
+}
+
+.bg-primary-color-light{
+    background-color: var(--primary-color-light);
+}
+
+.bg-secondary-color{
+    background-color: var(--secondary-color);
+}
+
+.border-primary-color{
+    border-color: var(--primary-color-border);
+}
+
+.border-secondary-color{
+    border-color: var(--secondary-color-light);
+}
+
