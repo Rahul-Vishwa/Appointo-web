@@ -3,6 +3,8 @@ import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
 import { provideAuth0 } from '@auth0/auth0-angular';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptors } from '@angular/common/http';
+import { httpInterceptor } from './core/interceptors/http.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -12,8 +14,19 @@ export const appConfig: ApplicationConfig = {
       domain: 'codeaux.us.auth0.com',
       clientId: 'kQZL1x5ZEuy5bMZIS7u900UVbfgUrnoK',
       authorizationParams: {
-        redirect_uri: 'https://dev.taskzen.local/dashboard/'
+        redirect_uri: 'https://dev.taskzen.local/callback/',
+        audience: 'https://api.taskzen.local/'
+      },
+      httpInterceptor: {
+        allowedList: [
+          {
+            uri: 'https://api.taskzen.local/*',
+          }
+        ]
       }
     }),
-  ]
+    provideHttpClient(
+      withInterceptors([httpInterceptor])
+    ),
+  ],
 };
