@@ -1,0 +1,48 @@
+<app-card>
+    <card-header>
+        Appointments 
+    </card-header>
+    <card-body>
+        @if (userName()) {
+            <div class="text-xl mb-5">
+                {{userName()}}
+            </div>
+        }
+        <div class="flex gap-10 flex-wrap">
+            @for (appointment of appointments(); track appointment.id) {
+                <div class="w-86 flex flex-col gap-2 bg-primary-color-lighter p-5 rounded-md shadow-md">
+                    <div class="flex justify-between">
+                        <div class="font-bold">Date</div>
+                        <div>{{ appointment.date }}</div>
+                    </div>
+                    <div class="flex justify-between">
+                        <div class="font-bold">Time</div>
+                        <div>{{ appointment.time | time12hr }}</div>
+                    </div>
+                    <div class="flex justify-between">
+                        <div class="font-bold">Booked At</div>
+                        <div>{{ appointment.createdAt | date: 'yyyy-MM-dd hh:mm a' }}</div>
+                    </div>
+                    <div class="flex justify-between">
+                        <div class="font-bold">Rescheduled At</div>
+                        <div>{{ appointment.modifiedAt | date: 'yyyy-MM-dd hh:mm a' }}</div>
+                    </div>
+                    <div class="flex justify-between">
+                        <div class="font-bold">Rescheduled By</div>
+                        <div>{{ appointment.modifiedBy }}</div>
+                    </div>
+                    <div class="mt-5">
+                        <div class="flex justify-end gap-5">
+                            <button class="primary-button" (click)="cancel(appointment.id)">
+                                Cancel
+                            </button>
+                            <button class="secondary-button" (click)="edit(appointment)">
+                                Edit
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </card-body>
+</app-card>

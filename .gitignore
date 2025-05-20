@@ -138,3 +138,7 @@ dist
 
 # .angular
 .angular/
+
+#others
+formControlScript.js
+formControlHtmlScript.js

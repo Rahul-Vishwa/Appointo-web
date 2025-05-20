@@ -1,0 +1,11 @@
+<div class="grid grid-rows-[auto_1fr] h-screen overflow-hidden">
+    <app-private-header class="z-10"></app-private-header>
+    <div class="relative">
+        <app-sidebar class="z-0"></app-sidebar>
+        <div class="ml-12 pt-16 p-4 w-[calc(100vw-48px)]">
+            <div class="h-[calc(100vh-84px)] overflow-auto">
+                <router-outlet></router-outlet>
+            </div>
+        </div>
+    </div>
+</div>

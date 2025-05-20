@@ -1,0 +1,15 @@
+<div class="w-full flex justify-center items-center">
+    <div class="w-full m-3 rounded-md border-1 border-primary-color bg-primary-color-light flex flex-col">
+        <div class="heading-font-size px-6 py-4 border-b-1 border-primary-color">
+            <ng-content select="card-header"></ng-content>
+        </div>
+        <div class="normal-font-size px-10 py-8 light-font-color flex-1 overflow-y-auto">
+            <ng-content select="card-body"></ng-content>
+        </div>
+        @if (showFooter()) {
+            <div class="border-t-1 border-primary-color px-6 py-4">
+                <ng-content select="card-footer"></ng-content>
+            </div>
+        }
+    </div>
+</div>

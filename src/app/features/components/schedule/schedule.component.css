@@ -1,0 +1,7 @@
+.custom-box:hover{
+    background-color: var(--primary-color-lighter);
+}
+
+.selected{
+    background-color: var(--primary-color-lighter);
+}

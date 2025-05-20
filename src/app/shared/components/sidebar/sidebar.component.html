@@ -1,0 +1,13 @@
+<div [class]="class" class="fixed top-[44px] h-[calc(100vh-64px)] w-12 bg-primary-color text-light-font border-r border-primary-color">
+    <nav class="flex justify-center">
+        <ul class="list-none p-0 m-0 flex flex-col items-center">
+            @for (item of icons; track $index) {
+                <li class="py-3 primary-font-color">
+                    <a [routerLink]="item.route">
+                        <span [innerHTML]="item.code"></span>
+                    </a>
+                </li>
+            }
+        </ul>
+    </nav>
+</div>

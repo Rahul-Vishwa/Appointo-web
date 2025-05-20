@@ -3,8 +3,9 @@ import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
 import { provideAuth0 } from '@auth0/auth0-angular';
-import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptors } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { httpInterceptor } from './core/interceptors/http.interceptor';
+import { errorInterceptor } from './core/interceptors/error.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -20,13 +21,13 @@ export const appConfig: ApplicationConfig = {
       httpInterceptor: {
         allowedList: [
           {
-            uri: 'https://api.taskzen.local/*',
+            uri: 'http://localhost:5093/*',
           }
         ]
       }
     }),
     provideHttpClient(
-      withInterceptors([httpInterceptor])
+      withInterceptors([httpInterceptor, errorInterceptor])
     ),
   ],
 };
