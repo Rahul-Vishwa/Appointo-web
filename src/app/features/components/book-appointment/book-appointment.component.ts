@@ -76,7 +76,7 @@ export class BookAppointmentComponent implements OnInit, OnDestroy {
       ),
     )
   }
-  
+
   getBookedSlots(){
     return this.appointment.getBookedSlots(
       this.form.controls['date'].value!
@@ -165,6 +165,14 @@ export class BookAppointmentComponent implements OnInit, OnDestroy {
     if (this.editAppointmentId() || !this.userBookedSlot()){
       this.form.controls['time'].setValue(slot);
     }
+  }
+
+  isPastAppointment(){
+    const parsedDate = convert12HrToDate(
+      this.userBookedSlot()?.time!, 
+      this.form.controls['date']?.value!, 
+    );
+    return parsedDate <= new Date();
   }
 
   book(){

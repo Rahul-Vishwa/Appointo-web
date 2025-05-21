@@ -73,10 +73,10 @@
         <div>
             @if (userBookedSlot() && !editAppointmentId()) {
                 <div class="flex gap-5">
-                    <button class="primary-button" (click)="cancel()">
+                    <button class="primary-button" [disabled]="isPastAppointment()" (click)="cancel()">
                         Cancel
                     </button>
-                    <button class="secondary-button" (click)="edit()">
+                    <button class="secondary-button" [disabled]="isPastAppointment()" (click)="edit()">
                         Edit
                     </button>
                 </div>

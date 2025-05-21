@@ -1,0 +1,4 @@
+.hover-text-color:hover{
+    color: var(--secondary-color);
+    cursor: pointer;
+}

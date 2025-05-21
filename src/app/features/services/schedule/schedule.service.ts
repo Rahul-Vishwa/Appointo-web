@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Schedule } from '../../models/schedule';
+import { GetSchedule, Schedule } from '../../models/schedule';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +16,16 @@ export class ScheduleService {
     return this.http.post<any>('Schedule', data);
   }
 
-  getSchedules():Observable<Schedule[]>{
-    return this.http.get<Schedule[]>('Schedule');
+  getSchedules(page: number, pageSize: number):Observable<GetSchedule>{
+    return this.http.get<GetSchedule>('Schedule', {
+      params:{
+        page,
+        pageSize
+      }
+    });
+  }
+
+  deleteSchedule(id: number):Observable<void>{
+    return this.http.delete<void>(`Schedule/${id}`);
   }
 }

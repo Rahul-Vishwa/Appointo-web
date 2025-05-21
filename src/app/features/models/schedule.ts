@@ -10,6 +10,11 @@ export interface ScheduleForm {
     effectiveFrom: FormControl<Date | null>;
 }
 
+export interface GetSchedule {
+    schedule: Array<Schedule>;
+    totalCount: number;
+}
+
 export interface Schedule {
     id: number;
     daysAvailable: string[];

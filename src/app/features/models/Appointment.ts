@@ -5,6 +5,11 @@ export interface BookAppointment {
     time: FormControl<string | null>;
 }
 
+export interface GetAppointments {
+    appointments: Array<GetAppointment>;
+    totalCount: number;
+}
+
 export interface GetAppointment {
     id: number;
     date: string;

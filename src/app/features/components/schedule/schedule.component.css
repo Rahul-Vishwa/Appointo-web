@@ -5,3 +5,7 @@
 .selected{
     background-color: var(--primary-color-lighter);
 }
+.hover-text-color:hover{
+    color: var(--secondary-color);
+    cursor: pointer;
+}

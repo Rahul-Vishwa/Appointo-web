@@ -9,6 +9,7 @@ import { DatepickerComponent } from "../../../shared/components/datepicker/datep
 import { ScheduleService } from '../../services/schedule/schedule.service';
 import { ToastService } from '../../../shared/services/toast.service';
 import { Time12hrPipe } from '../../../shared/pipes/time12hr.pipe';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-schedule',
@@ -27,6 +28,7 @@ import { Time12hrPipe } from '../../../shared/pipes/time12hr.pipe';
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class ScheduleComponent implements OnInit {
+  private subscriptions = new Subscription();
   form!: FormGroup<ScheduleForm>;
   availableOn:string[] = [
     'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'
@@ -43,6 +45,13 @@ export class ScheduleComponent implements OnInit {
   minEffectiveFromDate = new Date();
 
   schedules: WritableSignal<Array<Schedule>> = signal([]); 
+  pagination: { page: number, pageSize: number, totalCount: number, totalPages: number } = {
+    page: 1,
+    pageSize: 5,
+    totalCount: 0,
+    totalPages: 0
+  };
+
 
   constructor(
     private formBuilder:FormBuilder,
@@ -70,10 +79,31 @@ export class ScheduleComponent implements OnInit {
   }
 
   private getSchedules(){
-    this.schedule.getSchedules()
-      .subscribe(schedules=>{
-        this.schedules.set(schedules);
-      });
+    this.subscriptions.add(
+      this.schedule.getSchedules(
+        this.pagination.page,
+        this.pagination.pageSize
+      )
+      .subscribe(schedule=>{
+        this.schedules.set(schedule.schedule);
+        this.pagination.totalCount = schedule.totalCount;
+        this.pagination.totalPages = Math.ceil(schedule.totalCount / this.pagination.pageSize);
+      })
+    );
+  }
+
+  decreasePage(){
+    if (this.pagination.page > 1){
+      this.pagination.page -= 1;
+      this.getSchedules();
+    }
+  }
+
+  increasePage(){
+    if (this.pagination.page < this.pagination.totalPages){
+      this.pagination.page += 1;
+      this.getSchedules();
+    }
   }
 
   selectDay(day:string){
@@ -162,11 +192,23 @@ export class ScheduleComponent implements OnInit {
   }
 
   save(){
-    this.schedule.saveSchedule(this.form.value)
+    this.subscriptions.add(
+      this.schedule.saveSchedule(this.form.value)
       .subscribe(()=>{
         this.toast.info('Schedule Updated.');
         this.form.reset();
         this.getSchedules();
-      });
+      })
+    );
+  }
+
+  delete(id: number){
+    this.subscriptions.add(
+      this.schedule.deleteSchedule(id)
+        .subscribe(()=>{
+          this.toast.info('Schedule Deleted.');
+          this.getSchedules();
+        })
+    );
   }
 }

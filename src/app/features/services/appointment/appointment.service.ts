@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { BookedSlots, GetAppointment, GetLeave } from '../../models/Appointment';
+import { BookedSlots, GetAppointment, GetAppointments, GetLeave } from '../../models/Appointment';
 
 @Injectable({
   providedIn: 'root'
@@ -53,10 +53,12 @@ export class AppointmentService {
   }
 
   // pass id: 0 if you want api to take user's id
-  getUserAppointments(id: number):Observable<Array<GetAppointment>>{
-    return this.http.get<Array<GetAppointment>>('Appointment', {
+  getUserAppointments(id: number, page: number, pageSize: number):Observable<GetAppointments>{
+    return this.http.get<GetAppointments>('Appointment', {
       params:{
-        id
+        id,
+        page,
+        pageSize
       }
     });
   }

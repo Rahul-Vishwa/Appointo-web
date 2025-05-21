@@ -8,6 +8,7 @@ import { Time12hrPipe } from '../../../shared/pipes/time12hr.pipe';
 import { GetAppointment } from '../../models/Appointment';
 import { ToastService } from '../../../shared/services/toast.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { convert12HrToDate } from '../../../shared/utility/date';
 
 @Component({
   selector: 'app-my-appointments',
@@ -26,6 +27,12 @@ export class MyAppointmentsComponent implements OnInit, OnDestroy {
   appointments: WritableSignal<Array<GetAppointment>> = signal([]);
   private userId: WritableSignal<number> = signal(0);
   userName: WritableSignal<string | null> = signal(null); 
+  pagination: { page: number, pageSize: number, totalCount: number, totalPages: number } = {
+    page: 1,
+    pageSize: 6,
+    totalCount: 0,
+    totalPages: 0
+  };
 
   constructor(
     private toast: ToastService,
@@ -45,11 +52,31 @@ export class MyAppointmentsComponent implements OnInit, OnDestroy {
 
   private getAppointments(){
     this.subscriptions.add(
-      this.appointment.getUserAppointments(this.userId())
-        .subscribe(appointments=>{
-          this.appointments.set(appointments);
-        })
+      this.appointment.getUserAppointments(
+        this.userId(),
+        this.pagination.page,
+        this.pagination.pageSize
+      )
+      .subscribe(appointments=>{
+        this.appointments.set(appointments.appointments);
+        this.pagination.totalCount = appointments.totalCount;
+        this.pagination.totalPages = Math.ceil(appointments.totalCount / this.pagination.pageSize);
+      })
     );
+  }
+
+  decreasePage(){
+    if (this.pagination.page > 1){
+      this.pagination.page -= 1;
+      this.getAppointments();
+    }
+  }
+
+  increasePage(){
+    if (this.pagination.page < this.pagination.totalPages){
+      this.pagination.page += 1;
+      this.getAppointments();
+    }
   }
 
   cancel(id:number){
@@ -72,6 +99,11 @@ export class MyAppointmentsComponent implements OnInit, OnDestroy {
       }, 
       relativeTo: this.activatedRoute 
     });
+  }
+
+  isPastAppointment(date: string, time: string){
+    const parsedDate = convert12HrToDate(time, date);
+    return parsedDate <= new Date();
   }
 
   ngOnDestroy(){

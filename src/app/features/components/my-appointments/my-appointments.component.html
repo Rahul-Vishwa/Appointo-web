@@ -1,16 +1,40 @@
 <app-card>
-    <card-header>
-        Appointments 
+    <card-header class="flex justify-between">
+        <div>
+            Appointments
+        </div>
+        <div>
+            @if (userName()) {
+                <div>
+                    {{userName()}}
+                </div>
+            }
+            @else {
+                <div></div>
+            }
+        </div>
+        <div class="text-[12px] flex items-center">
+            <div class="flex gap-5">
+                <div class="hover-text-color" (click)="decreasePage()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-left-fill" viewBox="0 0 16 16">
+                        <path d="m3.86 8.753 5.482 4.796c.646.566 1.658.106 1.658-.753V3.204a1 1 0 0 0-1.659-.753l-5.48 4.796a1 1 0 0 0 0 1.506z"/>
+                    </svg>
+                </div>
+                <div class="flex flex-col items-end">
+                    Page {{ pagination.page }} of {{ pagination.totalPages }}
+                </div>
+                <div class="hover-text-color" (click)="increasePage()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-right-fill" viewBox="0 0 16 16">
+                        <path d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
     </card-header>
     <card-body>
-        @if (userName()) {
-            <div class="text-xl mb-5">
-                {{userName()}}
-            </div>
-        }
-        <div class="flex gap-10 flex-wrap">
+        <div class="grid grid-cols-3 gap-10 flex-wrap">
             @for (appointment of appointments(); track appointment.id) {
-                <div class="w-86 flex flex-col gap-2 bg-primary-color-lighter p-5 rounded-md shadow-md">
+                <div class="col-span-1 flex flex-col gap-2 bg-primary-color-lighter p-5 rounded-md shadow-md">
                     <div class="flex justify-between">
                         <div class="font-bold">Date</div>
                         <div>{{ appointment.date }}</div>
@@ -33,10 +57,10 @@
                     </div>
                     <div class="mt-5">
                         <div class="flex justify-end gap-5">
-                            <button class="primary-button" (click)="cancel(appointment.id)">
+                            <button class="primary-button" [disabled]="isPastAppointment(appointment.date, appointment.time)" (click)="cancel(appointment.id)">
                                 Cancel
                             </button>
-                            <button class="secondary-button" (click)="edit(appointment)">
+                            <button class="secondary-button" [disabled]="isPastAppointment(appointment.date, appointment.time)" (click)="edit(appointment)">
                                 Edit
                             </button>
                         </div>
