@@ -54,3 +54,9 @@
     color: var(--primary-color-lighter);
     border: none;
 }
+
+.unavailable-slot{
+    background-color: rgb(141, 141, 141);
+    color: var(--primary-color-lighter);
+    border: 1px solid rgb(141, 141, 141);
+}

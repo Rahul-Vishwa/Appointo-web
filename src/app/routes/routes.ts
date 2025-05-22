@@ -6,12 +6,16 @@ export const routes: Routes = [
         loadComponent: () => import('../features/components/home/home.component').then(m => m.HomeComponent),
         children: [
             {
+                path: 'dashboard',
+                loadComponent: () => import('../features/components/dashboard/dashboard.component').then(m => m.DashboardComponent)
+            },
+            {
                 path: 'schedule',
                 loadComponent: () => import('../features/components/schedule/schedule.component').then(m => m.ScheduleComponent)
             },
             {
-                path: 'appointments-view',
-                loadComponent: () => import('../features/components/appointments-view/appointments-view.component').then(m => m.AppointmentsViewComponent)
+                path: 'appointment-actions',
+                loadComponent: () => import('../features/components/appointment-actions/appointment-actions.component').then(m => m.AppointmentActionsComponent)
             },
             {
                 path: 'book-appointment',
@@ -20,10 +24,6 @@ export const routes: Routes = [
             {
                 path: 'appointments',
                 loadComponent: () => import('../features/components/my-appointments/my-appointments.component').then(m => m.MyAppointmentsComponent)
-            },
-            {
-                path: 'invite-members',
-                loadComponent: () => import('../features/components/invite-members/invite-members.component').then(m => m.InviteMembersComponent)
             },
         ]
     }

@@ -1,18 +1,18 @@
+import { NgClass, NgTemplateOutlet, DatePipe } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, inject, OnDestroy, OnInit, signal, WritableSignal } from '@angular/core';
-import { CardComponent } from "../../../shared/components/card/card.component";
-import { NgClass, DatePipe, NgTemplateOutlet } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { Subscription, map, forkJoin } from 'rxjs';
 import { CalendarComponent } from '../../../shared/components/calendar/calendar.component';
+import { CardComponent } from '../../../shared/components/card/card.component';
 import { Time12hrPipe } from '../../../shared/pipes/time12hr.pipe';
 import { ToastService } from '../../../shared/services/toast.service';
 import { compare12HrTime, convert12HrToDate } from '../../../shared/utility/date';
-import { BookedSlots, GetLeave, LeaveForm } from '../../models/Appointment';
+import { LeaveForm, BookedSlots, GetLeave } from '../../models/Appointment';
 import { AppointmentService } from '../../services/appointment/appointment.service';
 
 @Component({
-  selector: 'app-appointments-view',
+  selector: 'app-appointment-actions',
   imports: [
     CalendarComponent,
     ReactiveFormsModule,
@@ -20,12 +20,12 @@ import { AppointmentService } from '../../services/appointment/appointment.servi
     NgClass,
     Time12hrPipe,
     NgTemplateOutlet,
-],
-  templateUrl: './appointments-view.component.html',
-  styleUrl: './appointments-view.component.css',
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  ],
+  templateUrl: './appointment-actions.component.html',
+  styleUrl: './appointment-actions.component.css',
+  schemas:[CUSTOM_ELEMENTS_SCHEMA]
 })
-export class AppointmentsViewComponent  implements OnInit, OnDestroy {
+export class AppointmentActionsComponent implements OnInit, OnDestroy {
   private subscriptions = new Subscription();
   form!: FormGroup<LeaveForm>;
   minDate = new Date();
@@ -33,7 +33,10 @@ export class AppointmentsViewComponent  implements OnInit, OnDestroy {
   slots:WritableSignal<Array<{ id: number | null, name: string | null, userId: number | null, time:string, class:string, tooltip:string | null }>> = signal([]);
   bookedSlots:WritableSignal<Array<BookedSlots>> = signal([]); 
   editAppointmentId:WritableSignal<number | null> = signal(null);
+  originalEditDate:WritableSignal<string | null> = signal(null);
+  originalEditTime:WritableSignal<string | null> = signal(null);
   leaveMode: WritableSignal<boolean> = signal(false);
+  leaveOption: WritableSignal<'edit' | 'take'> = signal('edit');
   leaveType: WritableSignal<'full' | 'firstHalf' | 'secondHalf' | 'custom'> = signal('full');
   leaveSlots: WritableSignal<Array<string>> = signal([]);
   leave:WritableSignal<GetLeave | null> = signal(null);
@@ -119,7 +122,12 @@ export class AppointmentsViewComponent  implements OnInit, OnDestroy {
       }      
       
       const bookedSlotsTime = this.bookedSlots().find(a => a.time === slot.time);
+
       if (bookedSlotsTime){
+        if (this.editAppointmentId() === bookedSlotsTime.id){
+          this.editTime.set(slot.time);
+          return; 
+        }
         slot.id = bookedSlotsTime.id;
         slot.name = bookedSlotsTime.name;
         slot.userId = bookedSlotsTime.userId;
@@ -131,8 +139,10 @@ export class AppointmentsViewComponent  implements OnInit, OnDestroy {
 
   getSchedule(){
     this.leaveSlots.set([]);
+    this.editTime.set(null);
     this.form.controls['fromTime'].reset();
     this.form.controls['toTime'].reset();
+    this.leaveMode.set(false);
 
     const apis = {
       slots: this.getSlots(),
@@ -152,7 +162,13 @@ export class AppointmentsViewComponent  implements OnInit, OnDestroy {
     );
   }
 
-  selectSlot(time: string){
+  selectSlot(time: string, slotClass: string){
+    if (
+      (this.leaveOption() === 'edit' && slotClass === 'unavailable') ||
+      (this.leaveOption() === 'take' && (slotClass === 'unavailable' || slotClass === 'leave'))
+    ){
+      return;
+    }
     const fromTime = this.form.controls['fromTime'].value; 
     const toTime = this.form.controls['toTime'].value; 
 
@@ -198,8 +214,8 @@ export class AppointmentsViewComponent  implements OnInit, OnDestroy {
             compare12HrTime(slot.time, this.leave()?.fromTime!, 'greater or equal') &&
             compare12HrTime(this.leave()?.toTime!, slot.time, 'greater or equal')
           ){
-            slot.class = 'available';
-            slot.tooltip = 'Available';
+            slot.class = this.leaveOption() === 'edit' ? 'available' : 'unavailable';
+            slot.tooltip = this.leaveOption() === 'edit' ? 'available' : 'unavailable';
             this.leaveSlots().push(slot.time);
             return;
           }
@@ -208,8 +224,11 @@ export class AppointmentsViewComponent  implements OnInit, OnDestroy {
     }
   }
 
-  takeLeave(){
+
+  takeLeave(type:'edit' | 'take'){
     this.leaveMode.set(true);
+    this.originalEditDate.set(this.form.controls['date'].value);
+    this.leaveOption.set(type);
     this.editLeave();
   }
 
@@ -311,6 +330,8 @@ export class AppointmentsViewComponent  implements OnInit, OnDestroy {
     slot.class = 'available';
     slot.tooltip = 'available';
     this.editAppointmentId.set(slot.id);
+    this.originalEditDate.set(this.form.controls['date'].value);
+    this.originalEditTime.set(slot.time);
     this.editTime.set(slot.time);
   }
 

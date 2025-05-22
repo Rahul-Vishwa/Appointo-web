@@ -19,6 +19,24 @@ export interface GetAppointment {
     modifiedBy?: string;
 }
 
+export interface AppointmentViewForm {
+    date: FormControl<string | null>;
+}
+
+export interface Slot { 
+    id: number | null;
+    name: string | null;
+    userId: number | null;
+    time:string, class:string;
+    tooltip:string | null;
+}
+
+export interface EditData {
+    id: number; 
+    time: string;
+    date: string;
+}
+
 export interface LeaveForm {
     date: FormControl<string | null>;
     fromTime: FormControl<string | null>;

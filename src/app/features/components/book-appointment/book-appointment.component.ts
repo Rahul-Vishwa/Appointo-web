@@ -192,10 +192,12 @@ export class BookAppointmentComponent implements OnInit, OnDestroy {
     else{
       this.subscriptions.add(
         this.appointment.book(this.form.value)
-        .subscribe(()=>{
-          this.toast.info('Appointment Booked.');
-          this.getSchedule();
-        })
+          .subscribe({
+            next:()=>{
+              this.toast.info('Appointment Booked.');
+              this.getSchedule();
+            }
+          })
       );
     }
   }
